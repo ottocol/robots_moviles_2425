@@ -24,7 +24,7 @@ A continuación descargamos y compilamos los ficheros de ejemplo:
 ```bash
 #hay que hacerlo en la carpeta  "src" del workspace
 cd src
-git clone https://github.com/ottocol/mapeado_landmarks
+git clone https://github.com/ottocol/mapeado-landmarks
 catkin_make
 cd ..
 #para actualizar las variables de entorno y que encuentre el paquete
@@ -34,7 +34,7 @@ source devel/setup.bash
 Para probar el simulador, lanzar:
 
 ```bash
-roslaunch mapeado_landmarks mapeado-landmarks.launch
+roslaunch mapeado_landmarks mapeado_landmarks.launch
 ```
 
 Se abrirán dos ventanas: una con el simulador *stage* y otra con rviz. En *stage* el robot viene representado por el cuadrado amarillo. Si seleccionas la opción de menú de `View > Data` podrás ver el campo de visión del laser. En la ventana de `rviz` verás un *warning* relativo al mapa ya que todavía no hay ningún programa que lo esté publicando (¡es el que debes implementar!).

@@ -1,6 +1,6 @@
 # Práctica 2 de Robots Móviles. Mapeado y localización en ROS con filtros de partículas
 
-En esta práctica por un lado vamos a probar los algoritmos de mapeado, localización y navegación ya implementados en ROS y por otro  lado vamos a implementar nosotros un algoritmo de mapeado sencillo.
+En esta práctica vamos a probar los algoritmos de mapeado, localización y navegación ya implementados en ROS.
 
 Para crear el mapa, guardarlo y usarlo para localizarse y navegar tendréis que seguir una serie de pasos que no vamos a explicar con detalle aquí, ya que hay multitud de tutoriales en Internet y otros recursos que lo explican y no tiene mucho sentido repetirlo todo aquí. En el [apéndice](#apendice) tenéis unas cuantas referencias, pero podéis usar otras que encontréis en Internet, libros, etc. si lo deseáis.
 
@@ -36,9 +36,112 @@ Pruebas a realizar:
 - Documenta la navegación del robot con videos grabados de la pantalla
 - Explica en la memoria por escrito qué tal funciona la navegación (si el robot consigue llegar al destino de forma consistente) y la localización (si el robot sabe en todo momento dónde está) y posibles problemas (ya hemos comentado el de los sitios estrechos, si en las pruebas has descubierto otros problemas, coméntalos).
 
-## Construcción de mapas basados en *landmarks* con un algoritmo propio
+## Parte adicional (hasta 3 puntos) Construcción de mapas basados en *landmarks* con un algoritmo propio
 
-En este apartado implementaremos un algoritmo sencillo para construir mapas basados en landmarks, pero sin tener en cuenta los errores de odometría, la idea es que veáis que sin tener en cuenta dichos errores, el mapa resultante no va a ser tan bueno como los creados por los algoritmos de ROS.
+En este apartado implementaremos un algoritmo sencillo para construir mapas basados en *landmarks*. Como para simplificar no tendremos en cuenta los errores de odometría, el mapa tendrá errores acumulativos con el tiempo
+
+### Proyecto de ejemplo
+
+Os dejamos un mundo simulado y un fichero de configuración de `rviz` para que podáis probar vuestro algoritmo.
+
+Por simplicidad el simulador usado es *stage*, que no es ni siquiera 3D, ni implementa físicas realistas, pero consume pocos recursos computacionales, es fácil crear y configurar mundos simulados en él y tampoco necesitamos más "realismo" para este tipo de algoritmo. 
+
+Primero deberíais crear un *workspace* de ROS salvo que queráis reutilizar uno ya hecho:
+
+```bash
+mkdir robots_moviles_ws
+cd robots_moviles_ws
+mkdir src
+```
+
+A continuación descargamos y compilamos los ficheros de ejemplo:
+
+```bash
+#hay que hacerlo en la carpeta  "src" del workspace
+cd src
+git clone https://github.com/ottocol/mapeado_landmarks
+catkin_make
+cd ..
+#para actualizar las variables de entorno y que encuentre el paquete
+source devel/setup.bash
+```
+
+Para probar el simulador, lanzar:
+
+```bash
+roslaunch mapeado_landmarks mapeado_landmarks.launch
+```
+
+Se abrirán dos ventanas: una con el simulador *stage* y otra con rviz. En *stage* el robot viene representado por el cuadrado amarillo. Si seleccionas la opción de menú de `View > Data` podrás ver el campo de visión del laser. En la ventana de `rviz` verás un *warning* relativo al mapa ya que todavía no hay ningún programa que lo esté publicando (¡es el que debes implementar!).
+
+El *.launch* también pone en marcha un proceso de *teleop* que permite mover al robot con el teclado. Las teclas de control se mostrarán en la terminal. Recuerda que la ventana del *teleop* debe tener el foco de teclado para que la teleoperación funcione.
+
+### Mapas basados en landmarks en ROS
+
+
+
+### Sistemas de coordenadas en ROS. Transformación entre sistemas.
+
+En cualquier robot móvil hará falta en general más de un sistema de coordenadas. Por ejemplo, sensores como las cámaras 3D o los láseres, cuando detectan información lo hacen en su propio sistema de referencia (los ejes coinciden con la posición física del sensor), pero típicamente no coincidirán con los ejes del cuerpo del robot. Por otro lado, el sistema de referencia del cuerpo del robot se mueve conforme se mueve éste, pero necesitamos también sistemas externos "fijos". Por ejemplo, el sistema de coordenadas de un mapa del entorno.
+
+Esto hace que habitualmente sea necesario transformar coordenadas de un sistema a otro. Por ejemplo, en nuestro caso **necesitamos transformar las coordenadas de los obstáculos detectados por el laser a coordenadas del mapa**, para poder ir construyéndolo. Afortunadamente como veremos ROS nos va a ayudar mucho en esta tarea.
+
+En el [REP (ROS Enhancement Proposal) 105](https://www.ros.org/reps/rep-0105.html) se definen una serie de sistemas de coordenadas estándar para robots móviles. Los que nos interesan de momento son los siguientes:
+
+- `base_link`: El sistema de coordenadas de la plataforma base del robot. Es un sistema local al robot, que se mueve cuando este se mueve. Típicamente se coloca en el centro de rotación del robot.
+- `odom`: Este sistema de coordenadas está fijo en el mundo (no se mueve cuando se mueve el robot) y su origen y orientación 0 coincide con la posición de partida del robot. Es lo que se conoce habitualmente como *odometría*: conforme el robot se va moviendo también va estimando su posición actual con respecto a este sistema.
+- `map`: Es un sistema de coordenadas asociado a un mapa del entorno. Está fijo en el mundo (no se mueve cuando se mueve el robot) y su origen y orientación 0 es arbitrario y depende de quien haya creado el mapa. El robot puede estimar su posición con respecto a este sistema comparando el mapa con lo que perciben actualmente los sensores. Esto se conoce como *localización* (lo veremos en la práctica 2).
+
+Además, como usaremos un laser para detectar obstáculos, tendremos un sistema asociado a él: `base_laser_link` es el nombre típico que se le suele dar, y es en el que se obtienen las medidas del laser.
+
+Si tenéis lanzado el `mapeado_naive.launch` de ejemplo podéis ver estos sistemas y las relaciones entre ellos ejecutando en una terminal:
+
+```bash
+rosrun rqt_tf_tree rqt_tf_tree
+```
+
+![Figura 2: Grafo de transformaciones en ROS](tf_frames.png)
+
+Debería aparecer una figura similar a la figura 2. Vemos que es un grafo en el que los nodos son los diferentes sistemas de coordenadas. Se conoce como *grafo de transformaciones*. Que aparezca una arista que va de un nodo A a un nodo B indica que ROS conoce la matriz que transforma el sistema A en el B. Si conocemos la transformación de A a B también tenemos la de B a A, ya que es la matriz inversa, de modo que la dirección del arco no es importante.
+
+En un grafo de transformaciones **podemos calcular la transformación entre dos sistemas cualesquiera A y B siempre que haya un camino entre ambos**, sin importar la dirección de las flechas. 
+
+Aunque parezca antiintuitivo, **la transformación que lleva de un sistema A al sistema B, en realidad nos sirve para pasar puntos dados en el sistema B al sistema A**. Tenéis más información sobre la razón de esto en el apéndice 1.
+
+Por ejemplo, en nuestro caso queremos pasar un punto dado en el sistema `base_laser_link` al sistema `map` y por tanto necesitamos la transformación de `map` a `base_laser_link`. Vemos que hay un camino que une ambos nodos, de modo que podemos pedirle a ROS la transformación, vamos a ver cómo hacerlo.
+
+El código básico en Python para transformar entre `map` y `base_laser_link` sería el siguiente:
+
+```python
+import tf2_ros
+
+tfBuffer = tf2_ros.Buffer()
+listener = tf2_ros.TransformListener(tfBuffer)
+try:
+	#Obtener la transformación entre un sistema "padre" e "hijo". 
+	#Time(0) indica que queremos la última disponible
+    trans = tfBuffer.lookup_transform('map', 'base_laser_link', rospy.Time(0))
+#si se da alguna de estas excepciones no se ha podido encontrar la transformación    
+except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
+            tf2_ros.ExtrapolationException):
+    rospy.logerr("No se ha podido encontrar la transformación")
+```
+
+Nótese que al comienzo de la ejecución es normal que salte la excepción, ya que las transformaciones se hacen gracias a mensajes publicados por ROS y es posible que inicialmente no haya ninguno disponible.
+
+La transformación podemos aplicarla a un punto con coordenadas `(x,y,z)` como sigue:
+
+```python
+import tf2_geometry_msgs
+#supongamos que tenemos las coordenadas (x,y) de una lectura del laser
+#el tercer parámetro es z que no nos interesa en este caso
+punto = Point(x,y,0)
+ps = PointStamped(point=punto)
+#"trans" sería la transformación obtenida anteriormente
+punto_trans = tf2_geometry_msgs.do_transform_point(ps, trans)
+```
+
+Nota: en nuestro caso los sistemas `map` y `odom` ocupan la misma posición. Recordemos que `odom` es la posición inicial del robot "cuando se pone en marcha". Eso quiere decir que el (0,0,0) del mapa corresponderá con esta posición. Esta información se la damos a ROS en el `mapeado_naive.launch` mediante un `static_transform_publisher`, que es el tipo de nodo que se usa para publicar transformaciones estáticas (que no cambian con el tiempo) entre dos sistemas. Mira la línea 8 del archivo y la wiki de ROS sobre el [`static_transform_publisher`](http://wiki.ros.org/tf#static_transform_publisher) para más detalles.
 
 ## Parte adicional: probar el mapeado y navegación en los robots reales (hasta 1 punto)
 
@@ -78,19 +181,19 @@ Deberías
 
 ### Baremo
 
-- **Requisitos mínimos (hasta un 6)**: la práctica debe estar adecuadamente documentada, detallando los resultados de todos los experimentos realizados. 
-- **(hasta 1.5 puntos adicionales)**: análisis de los modelos de movimiento y de observación de ROS
-- **(hasta 1.5 puntos adicionales)**: probar alguna implementación ya hecha de un algoritmo de filtro de partículas para localización. 
+- **Requisitos mínimos (hasta un 5)**: la práctica debe estar adecuadamente documentada, detallando los resultados de todos los experimentos realizados. 
+- **(hasta 3 puntos adicionales)**: implementar el algoritmo de mapeado basado en *landmarks*.
+- **(hasta 1 punto adicional)**: probar alguna implementación ya hecha de un algoritmo de filtro de partículas para localización. 
 - **(hasta 1 punto adicional)** probar el mapeado en los Turtlebot reales.
 - En lugar de alguno de los puntos anteriores se puede hacer cualquier otra ampliación que se os ocurra, por ejemplo
-	+ (hasta 1.5 puntos) Leer un artículo científico sobre mapeado/localización (estado actual de la investigación, algoritmos alternativos...) haciendo un resumen del contenido. Si no sabéis cuál elegir, preguntad al profesor.
-	+ (hasta 1.5 puntos) Probar algún otro algoritmo de mapeado o localización que esté implementado en ROS y esté disponible en Internet. En la memoria de la práctica deberíais incluir cómo lo habéis instalado, una breve explicación de las ideas en que se basa y resultados de funcionamiento, comparándolo con el algoritmo por defecto de ROS e indicando también casos en los que pueda fallar si así ha sido.
+	+ (hasta 1 punto) Leer un artículo científico sobre mapeado/localización (estado actual de la investigación, algoritmos alternativos...) haciendo un resumen del contenido. Si no sabéis cuál elegir, preguntad al profesor.
+	+ (hasta 1 punto) Probar algún otro algoritmo de mapeado o localización que esté implementado en ROS y esté disponible en Internet. En la memoria de la práctica deberíais incluir cómo lo habéis instalado, una breve explicación de las ideas en que se basa y resultados de funcionamiento, comparándolo con el algoritmo por defecto de ROS e indicando también casos en los que pueda fallar si así ha sido.
 	+ **Consultad con el profesor** lo que queréis hacer para ver cuánto se podría valorar en el baremo, si queréis que os pase enlaces a artículos o algoritmos, etc.
 
 
 ### Plazos y procedimiento de entrega
 
-La práctica se podrá entregar hasta las 23:59 horas del **martes 7 de Noviembre**.
+La práctica se podrá entregar hasta las 23:59 horas del **martes 5 de Noviembre**.
 
 La entrega se realizará a través del Moodle de la asignatura. Tiene un tamaño máximo de 20Mb (de momento no lo podemos ampliar), por lo que si necesitáis subir más datos tendréis que poner enlaces a vuestro Google Drive o similar o si son videos, enlaces a Youtube o donde lo podáis subir.
 
