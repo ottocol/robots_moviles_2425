@@ -23,7 +23,7 @@ Una vez instalado, arranca Docker Desktop y ve al apartado de "Images". En la ba
 Una vez se haya descargado la imagen, para ponerla en marcha abre una terminal (en windows puedes hacerlo con la orden `cmd`) y en ella escribe:
 
 ```bash
-docker run -it --rm --name=ros_gazebo_desktop -m=4g -p 6080:80 -p 5900:5900  -e RESOLUTION=1080x720 -e USER=ubuntu -e PASSWORD=ubuntu ottocol/ros-melodic-tb2
+docker run -it --name=ros_gazebo_desktop -m=4g -p 6080:80 -p 5900:5900  -e RESOLUTION=1080x720 -e USER=ubuntu -e PASSWORD=ubuntu ottocol/ros-melodic-tb2
 ```
 
 Puedes cambiar o añadir los siguientes parámetros:
@@ -31,12 +31,13 @@ Puedes cambiar o añadir los siguientes parámetros:
 - `-m=4g` da 4Gb de memoria al contenedor, si tu máquina física tiene bastante memoria puedes intentar darle más
 - `-e` como puedes ver especifica la resolución, puedes adaptarla a tus necesidades
 - `-v directorio_windows:/home/ubuntu/data`: montar un directorio de windows en el contenedor(sustituye `directorio_windows` por cualquier directorio que tengas accesible desde la terminal) . Lo que almacenes en el directorio de windows será visible dentro del contenedor en `/home/ubuntu/data`. Así, puedes editar tu código en windows y ejecutarlo desde el linux del contenedor. Es una alternativa a modificar los datos dentro del contenedor, y es útil porque aunque destruyamos el contenedor los datos siguen estando al estar físicamente en el SO de "fuera".
+- Si quieres que el contenedor se "autodestruya" cuando lo pares con `Ctrl-C` puedes añadir el argumento `--rm`. En ese caso no podrás rearrancarlo otra vez sino que tendrás que crear uno nuevo cada vez a partir de la imagen.
 
 Conforme vaya arrancando el contenedor irá imprimiendo mensajes en la consola, una vez arrancado puedes verlo abriendo una ventana de un navegador y accediendo a `http://localhost:6080`. Debería mostrarse el escritorio del contenedor Docker, ejecutando una distribución de linux llamada Lubuntu. Puedes abrir una terminal y comprobar que todo va bien tecleando `roslaunch turtlebot_gazebo turtlebot_world.launch`, tras unos segundos debería aparecer el simulador Gazebo con una simulación de un Turtlebot 2 como los del laboratorio.
 
 > Lo que estás viendo es el escritorio "remoto" del contenedor, que también se expone con un protocolo llamado VNC. Si lo prefieres puedes instalarte en tu ordenador un cliente VNC y conectar con `localhost:5079`, dependiendo de tu configuración es posible que obtengas alguna mejora de rendimiento.
 
-Puedes parar el contenedor haciendo Crtl-C en la terminal en que hayas ejecutado `docker run` o bien desde la interfaz gráfica de Docker.
+Puedes parar el contenedor haciendo Crtl-C en la terminal en que hayas ejecutado `docker run` o bien desde la interfaz gráfica de Docker. Salvo que hayas añadido el argumento `--rm` puedes rearrancar el contenedor con `docker start ros_gazebo_desktop`.
 
 ## Opción b) Usar una máquina virtual
 
