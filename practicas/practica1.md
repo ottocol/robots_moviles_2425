@@ -34,14 +34,14 @@ source devel/setup.bash
 Para probar el simulador, lanzar:
 
 ```bash
-roslaunch mapeado_landmarks mapeado_landmarks.launch
+roslaunch mapeado_landmarks mapeado-landmarks.launch
 ```
 
 Se abrirán dos ventanas: una con el simulador *stage* y otra con rviz. En *stage* el robot viene representado por el cuadrado amarillo. Si seleccionas la opción de menú de `View > Data` podrás ver el campo de visión del laser. En la ventana de `rviz` verás un *warning* relativo al mapa ya que todavía no hay ningún programa que lo esté publicando (¡es el que debes implementar!).
 
 El *.launch* también pone en marcha un proceso de *teleop* que permite mover al robot con el teclado. Las teclas de control se mostrarán en la terminal. Recuerda que la ventana del *teleop* debe tener el foco de teclado para que la teleoperación funcione.
 
- En el proyecto de ejemplo tenéis además un nodo de ROS en el archivo `crear_mapa.py` que os puede servir como plantilla para comenzar a desarrollar vuestro código.
+ En el proyecto de ejemplo tenéis además un nodo de ROS en el archivo `crear_mapa.py` que os puede servir como plantilla para comenzar a desarrollar vuestro código. Este código no se pone en marcha automáticamente con el `.launch`, tenéis que ejecutarlo a mano (por ejemplo con `python crear_mapa.py`).
 
 ### Landmarks en ROS
 
