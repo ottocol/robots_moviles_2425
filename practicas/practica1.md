@@ -5,7 +5,7 @@ En esta práctica vamos a implementar un algoritmo de mapeado sencillo para cons
 Un *landmark* es un lugar o un objeto que se puede distinguir más o menos fácilmente del resto del entorno. Qué consideremos un *landmark* dependerá del tipo de sensor que estemos usando. Por ejemplo para un laser 2D los *landmarks* pueden ser las esquinas de las paredes, ya que son sitios donde la dirección de los puntos detectados cambia bruscamente. Para una cámara pueden ser objetos de un color especial, o códigos QR colocados en las paredes.
 Como para simplificar no tendremos en cuenta los errores de odometría, el mapa tendrá errores acumulativos con el tiempo.
 
-### Proyecto de ejemplo
+## Proyecto de ejemplo
 
 Os dejamos un mundo simulado y un fichero de configuración de `rviz` para que podáis probar vuestro algoritmo.
 
@@ -43,7 +43,7 @@ El *.launch* también pone en marcha un proceso de *teleop* que permite mover al
 
  En el proyecto de ejemplo tenéis además un nodo de ROS en el archivo `crear_mapa.py` que os puede servir como plantilla para comenzar a desarrollar vuestro código. Este código no se pone en marcha automáticamente con el `.launch`, tenéis que ejecutarlo a mano (por ejemplo con `python crear_mapa.py`).
 
-### Landmarks en ROS
+## Landmarks en ROS
 
 En nuestro caso, en el entorno que se mueve el robot están las paredes del fondo y hay objetos relativamente pequeños de forma circular que os podéis imaginar como postes vistos desde arriba. Los landmarks van a ser estos postes. Tendréis que dar con algún método que os permita distinguir los postes de las paredes del fondo. Fijaos que en los objetos habrá unas pocas lecturas a una distancia similar y luego si el laser detecta el fondo cambiará mucho la distancia. Las paredes son segmentos a distancia similar entre sí pero mucho más largos que los objetos circulares.
 
@@ -51,7 +51,7 @@ Como cuando el robot se vaya moviendo irá detectando varias veces el mismo land
 
 Los landmarks en ROS pueden representarse con objetos de tipo `Marker`. En `crear_mapa.py` tenéis un ejemplo de cómo publicar un `MarkerArray`, que no es más que una lista de `Marker` para visualizarlo en RViz. La configuración de RViz para el proyecto ya debería mostrar los landmarks de ejemplo (podéis ejecutarlo con `python crear_mapa.py`). Tendréis que cambiar estas coordenadas por los landmarks que detectéis.
 
-### Sistemas de coordenadas en ROS. Transformación entre sistemas.
+## Sistemas de coordenadas en ROS. Transformación entre sistemas.
 
 En cualquier robot móvil hará falta en general más de un sistema de coordenadas. Por ejemplo, sensores como las cámaras 3D o los láseres, cuando detectan información lo hacen en su propio sistema de referencia (los ejes coinciden con la posición física del sensor), pero típicamente no coincidirán con los ejes del cuerpo del robot. Por otro lado, el sistema de referencia del cuerpo del robot se mueve conforme se mueve éste, pero necesitamos también sistemas externos "fijos". Por ejemplo, el sistema de coordenadas de un mapa del entorno.
 
@@ -114,7 +114,7 @@ punto_trans = tf2_geometry_msgs.do_transform_point(ps, trans)
 
 Nota: en nuestro caso los sistemas `map` y `odom` ocupan la misma posición. Recordemos que `odom` es la posición inicial del robot "cuando se pone en marcha". Eso quiere decir que el (0,0,0) del mapa corresponderá con esta posición. Esta información se la damos a ROS en el `mapeado_naive.launch` mediante un `static_transform_publisher`, que es el tipo de nodo que se usa para publicar transformaciones estáticas (que no cambian con el tiempo) entre dos sistemas. Mira la línea 8 del archivo y la wiki de ROS sobre el [`static_transform_publisher`](http://wiki.ros.org/tf#static_transform_publisher) para más detalles.
 
-## Evaluación de la práctic y fecha de entrega
+## Evaluación de la práctica y fecha de entrega
 
 Desarrollando correctamente todo lo anterior podéis obtener hasta un 7 en la nota. En la entrega debéis incluir:
 
