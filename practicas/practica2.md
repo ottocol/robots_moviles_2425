@@ -87,7 +87,7 @@ En resumen, el baremo de puntuación es el siguiente:
 
 ### Plazos y procedimiento de entrega
 
-La práctica se podrá entregar hasta las 23:59 horas del **martes 5 de Noviembre**.
+La práctica se podrá entregar hasta las 23:59 horas del **martes 12 de Noviembre**.
 
 La entrega se realizará a través del Moodle de la asignatura. Tiene un tamaño máximo de 20Mb (de momento no lo podemos ampliar), por lo que si necesitáis subir más datos tendréis que poner enlaces a vuestro Google Drive o similar o si son videos, enlaces a Youtube o donde lo podáis subir.
 
