@@ -77,7 +77,7 @@ Puedes probar a mover el robot para ver cómo cambian las lecturas. **En una ter
 
 ## Mapeado con teleoperación
 
-En **una terminal en el robot**, lanza la teleoperación si no lo has hecho ya (`roslaunch turtlebot_teleop keyboard_teleop.launch`)
+En **una terminal (puede ser conectada al robot con ssh o en el PC)**, lanza la teleoperación si no lo has hecho ya (`roslaunch turtlebot_teleop keyboard_teleop.launch`)
 
 En otra **terminal del robot**, para crear el mapa escribe:
 
@@ -96,7 +96,7 @@ rosrun map_server map_saver -f nombre_que_quieras_dar_al_mapa
 
 Recuerda que se crean dos ficheros, uno con extensión `.pgm`, que es el gráfico con el mapa en sí y otro con extensión `.yaml` que son los metadatos (tamaño en metros del total, tamaño en metros de cada pixel,...).
 
-> Si quieres guardar una copia del mapa en el PC puedes ejecutar la misma instrucción en una terminal del PC, pero como mínimo deberías guardarlo en el robot, ya que luego le hará falta para la localización.
+> Te recomiendo que guardes una copia del mapa en la máquina virtual, ya que tendrás que adjuntarla en la memoria de la práctica. Para ello puedes ejecutar la misma instrucción en una terminal del PC, pero como mínimo deberías haber guardado el mapa en el robot, ya que le hará falta para la localización y navegación.
 
 
 ## Localización
