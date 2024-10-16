@@ -15,6 +15,8 @@ Los objetivos son:
 
 > En el modo cliente/servidor, el cliente es nuestro PC y el servidor el robot. Hay algunos nodos de ROS que deben correr en el robot (por ejemplo el `turtlebot_bringup.launch`) y otros en nuestro PC (por ejemplo `RViz`). En otros es indiferente, aunque es recomendable ejecutar todo en el robot salvo `rviz` y la teleoperación, más que nada porque el resto (mapeado, localización, navegación) es dependiente de la versión de ROS y así nos aseguramos de estar ejecutando lo instalado en el propio robot.
 
+### Conectar con la wifi del laboratorio
+
 Si estás en una máquina virtual asegúrate de que la red está configurada en modo *puente* o *bridge*. En VirtualBox, dentro de la configuración de la máquina virtual, en el apartado de `Red` selecciona `Conectado a:` `Adaptador puente` y en el `nombre:` del adaptador asegúrate que usas el adaptador wifi y no uno cableado.
 
 Antes de arrancar la máquina virtual asegúrate de **conectar tu PC con la red wifi del laboratorio**, recuerda que el nombre de la red comienza por "labrobot". Usa a ser posible las que llevan un 5 en el nombre, son las de 5Ghz y deberían tener un mayor ancho de banda. En la pizarra del aula debería estar escrita la contraseña de la wifi. Esta wifi por cuestiones de seguridad no tiene salida a Internet, de modo que cuando estés conectado a ella no tendrás acceso a internet salvo que tu PC tenga otro adaptador de red adicional.
