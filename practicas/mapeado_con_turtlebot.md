@@ -22,7 +22,7 @@ Antes de arrancar la máquina virtual asegúrate de **conectar tu PC con la red 
 
 ### Fijar las variables de entorno
 
-Una vez arrancada la máquina virtual, para poder usar el modo cliente/servidor necesitamos definir un par de variables de entorno. Estas variables deben estar disponibles en cualquier terminal que abramos, así que lo más sencillo es meterlas en el `.bashrc`. En el código siguiente a ejecutar en una terminal sustituye `<ip_del_turtlebot>` por la dirección ip del turtlebot y `<tu_ip>` por la dirección ip de tu PC. Puedes averiguar esta con `ifconfig`. (En la máquina virtual de la asignatura no está instalada esta orden, tendrás que instalarla previamente con `sudo apt install net-tools` - contraseña "melodic").
+Una vez arrancada la máquina virtual, para poder usar el modo cliente/servidor necesitamos definir un par de variables de entorno. Estas variables deben estar disponibles en cualquier terminal (que no haga ssh al robot), así que lo más sencillo es meterlas en el `.bashrc`. En el código siguiente a ejecutar en una terminal sustituye `<ip_del_turtlebot>` por la dirección ip del turtlebot y `<tu_ip>` por la dirección ip de tu PC. Puedes averiguar esta con `ifconfig`. (En la máquina virtual de la asignatura no está instalada esta orden, tendrás que instalarla previamente con `sudo apt install net-tools` - contraseña "melodic").
 
 ```bash
 echo "export ROS_MASTER_URI=http://<ip_del_turtlebot>:11311" >> ~/.bashrc
@@ -33,6 +33,8 @@ luego haz `source .bashrc` o cierra la terminal y vuelve a abrirla para que los 
 
 
 ### Arrancar el robot y comprobar que podemos conectar
+
+Enciende el robot con el interruptor que tiene en el lateral de la base. Espera un minuto a que arranque el PC que lleva incorporado.
 
 1. En una terminal **conéctate con el robot** con  `ssh turtlebot@ip_del_robot` (cuidado, en el robot 5 es `ssh tb2@ip_del_robot`), la contraseña es `ros`.
 
