@@ -1,5 +1,7 @@
 # Práctica 2 de Robots Móviles. Mapeado y localización en ROS con filtros de partículas
 
+> IMPORTANTE: esta práctica se debe realizar de manera individual
+
 En esta práctica vamos a probar los algoritmos de mapeado, localización y navegación ya implementados en ROS. Los usados por defecto se basan en **filtros de partículas** como se ve en clase de teoría.
 
 Para crear el mapa, guardarlo y usarlo para localizarse y navegar tendréis que seguir una serie de pasos que no vamos a explicar con detalle aquí, ya que hay multitud de tutoriales en Internet y otros recursos que lo explican y no tiene mucho sentido repetirlo todo aquí. En el [apéndice](#apendice) tenéis unas cuantas referencias, pero podéis usar otras que encontréis en Internet, libros, etc. si lo deseáis.
@@ -58,7 +60,7 @@ Para la máxima nota en este apartado investiga por tu cuenta el modelo basado e
 > Para resolver esta parte os recomendamos que hagáis uso de ChatGPT o algún otro LLM (Modelo del Lenguaje) como Claude o Llama. Copiad y pegad el código relevante y pedid que os lo explique, lo suele hacer bastante bien. Como siempre que uséis un modelo del lenguaje, chequead con lo visto en teoría o con otras fuentes que la explicación tiene sentido y no está inventando cosas. 
 
 
-## Parte adicional: análisis de un filtro de partículas para localización (hasta 1.5 puntos)
+## Parte adicional: análisis de un filtro de partículas para localización (hasta 1 punto)
 
 Probad alguna implementación ya hecha de un algoritmo de filtro de partículas para localización. No es necesario que esté integrada en ROS y puede estar implementada en cualquier lenguaje. En Internet hay multitud de ellas. Busca alguna para la que esté disponible el código, y conozcas el lenguaje de programación, ya que deberás examinar su funcionamiento.
 
