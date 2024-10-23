@@ -27,8 +27,8 @@ Antes de arrancar la máquina virtual asegúrate de **conectar tu PC con la red 
 Una vez arrancada la máquina virtual, para poder usar el modo cliente/servidor necesitamos definir un par de variables de entorno. Estas variables deben estar disponibles en cualquier terminal (que no haga ssh al robot), así que lo más sencillo es meterlas en el `.bashrc`. En el código siguiente a ejecutar en una terminal sustituye `<ip_del_turtlebot>` por la dirección ip del turtlebot y `<tu_ip>` por la dirección ip de tu PC. Puedes averiguar esta con `ifconfig`. (En la máquina virtual de la asignatura no está instalada esta orden, tendrás que instalarla previamente con `sudo apt install net-tools` - contraseña "melodic").
 
 ```bash
-echo "export ROS_MASTER_URI=http://<ip_del_turtlebot>:11311" >> ~/.bashrc
-echo "export ROS_HOSTNAME=<tu_ip>" >> ~/.bashrc
+echo "export ROS_MASTER_URI=http://ip_del_turtlebot:11311" >> ~/.bashrc
+echo "export ROS_HOSTNAME=tu_ip" >> ~/.bashrc
 ```
 
 luego haz `source .bashrc` o cierra la terminal y vuelve a abrirla para que los cambios tengan efecto.
