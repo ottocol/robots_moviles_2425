@@ -1,7 +1,7 @@
 
 
 # Práctica 3. Programación de tareas en robots móviles
-**Robots Móviles. Universidad de Alicante. Noviembre 2023**
+**Robots Móviles. Universidad de Alicante. Noviembre 2024**
 
 En esta práctica vamos a programar un robot móvil para que realice una tarea estructurada, que implique coordinar una serie de tareas individuales. El objetivo es que sirva para ver conceptos y técnicas que os puedan ser útiles para desarrollar el proyecto de la asignatura durante el último mes de clase.
 
