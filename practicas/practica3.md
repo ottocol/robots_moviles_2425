@@ -83,7 +83,31 @@ En [este ejemplo](https://github.com/ottocol/navigation_stage/blob/main/src/test
 
 SMACH tiene diversos tipos de estados predefinidos que nos permiten realizar ciertas tareas en ROS de manera sencilla sin tener que escribir demasiado código. Por ejemplo si un estado lo único que necesita hacer es llamar a un `Action` de ROS podemos usar un `SimpleActionState`, que solo necesita que le digamos el tipo de la acción y sus parámetros. Como la acción `MoveBaseAction` nos permite movernos a un punto del mapa planificando la mejor trayectoria y evitando obstáculos usar este tipo de estado es la mejor forma si queremos que en un estado el robot se mueva a un determinado punto.
 
-[Este ejemplo](https://github.com/ottocol/navigation_stage/blob/main/src/smach_actionstate.py) ilustra cómo llamar a un `MoveBaseAction` de ROS con  un estado de SMACH de tipo `SimpleActionState`. Se definen dos estados correspondientes a acciones de movimiento a dos puntos del mapa y la máquina va alternando entre los estados de manera indefinida (en este caso no termina, tendréis que pararlo con Ctrl-C). 
+Por ejemplo:
+
+```python
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from smach import StateMachine
+from smach_ros import SimpleActionState
+
+goal = MoveBaseGoal()
+goal.target_pose.header.frame_id = 'map'
+#queremos ir a la coordenada (x=10,y=5) CAMBIADLAS por las que queráis
+goal.target_pose.pose.position.x = 10
+goal.target_pose.pose.position.y = 5
+goal.target_pose.pose.position.z = 0.0
+#la orientación en z es un quaternion (x,y,z.w), aquí tomanos todo a 0 menos w=1 -> ángulo 0
+goal.target_pose.pose.orientation.w = 1
+sm = StateMachine(outcomes=["end"])
+with sm:
+    #reemplazar "nombre_estado" y transitions por lo que queráis
+    #En este ejemplo cuando acabe la acción se generará una transición "ok" al estado "otro_estado"
+    StateMachine.add("nombre_estado", SimpleActionState('move_base', MoveBaseAction, goal=goal), transitions={'ok', "otro_estado"})
+    #aquí añadiríamos más estados si hacen falta
+    #...
+```
+
+[Este ejemplo](https://github.com/ottocol/navigation_stage/blob/main/src/smach_actionstate.py), un poco más complejo, tomado del libro "Programming Robots with ROS",  define dos estados correspondientes a acciones de movimiento a dos puntos del mapa y la máquina va alternando entre los estados de manera indefinida (en este caso no termina, tendréis que pararlo con Ctrl-C). 
 
 ## Ayuda para la implementación
 
